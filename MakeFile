@@ -1,0 +1,7 @@
+.PHONY: lint
+lint:
+	poetry run pre-commit run --all-files
+
+.PHONY: test
+test:
+	poetry run pytest --cov-config=.coveragerc --cov=stream_processor/ --cache-clear --color=yes --cov-fail-under=75 test/ --disable-pytest-warnings
