@@ -1,8 +1,7 @@
 import argparse
 
 from processors import get_stream_processor
-
-from kafka_utilis.common.config import SOURCES
+from stream_processor.common.config import SOURCES
 
 
 if __name__ == "__main__":

@@ -1,83 +1,23 @@
 ---
-version: '3.7'
+version: '3.8'
 services:
-  zookeeper:
-    image: confluentinc/cp-zookeeper:6.0.2
-    hostname: zookeeper
-    container_name: zookeeper
+  twitter-socket:
+    image: python:3.8-alpine
+    container_name: twitter-socket
     ports:
-      - "2181:2181"
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    extra_hosts:
-      - "localhost: 0.0.0.0"
-
-  broker:
-    image: confluentinc/cp-kafka:6.0.2
-    hostname: broker
-    container_name: broker
-    depends_on:
-      - zookeeper
-    ports:
-      - "29092:29092"
-      - "9092:9092"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-    extra_hosts:
-      - "localhost: 0.0.0.0"
-
-  schema-registry:
-    image: confluentinc/cp-schema-registry:6.0.2
-    hostname: schema-registry
-    container_name: schema-registry
-    depends_on:
-      - zookeeper
-      - broker
-    ports:
-      - "8081:8081"
-    environment:
-      SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
-    extra_hosts:
-      - "localhost: 0.0.0.0"
-
-  # This container bootstraps topics and schemas
-  create-producer-topic:
-    image: confluentinc/cp-kafka:6.0.2
-    depends_on:
-      - broker
+      - "5555:5555"
     volumes:
-      - ${PWD}/schemas:/test
-    command: |
-      bash -c 'echo Waiting for Kafka to be ready... && \
-      cub kafka-ready -b broker:29092 1 50 && \
-      cub sr-ready schema-registry 8081 50 && \
-      curl -X POST -H "Content-Type: application/vnd.schemaregistry.v1+json" -d @/test/test-key.json http://schema-registry:8081/subjects/test-topic-key/versions && \
-      curl -X POST -H "Content-Type: application/vnd.schemaregistry.v1+json" -d @/test/test-value.json http://schema-registry:8081/subjects/test-topic-value/versions && \
-      kafka-topics --create --topic test-topic --partitions 1 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181 && \
-      sleep infinity'
-    environment:
-      KAFKA_BOOTSTRAP_SERVERS: 'broker:29092'
-      SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      - ./docker_setup.py:/usr
+    command: sh -c "python /usr/twitter_simulator.py"
 
-  kafdrop:
-    image: obsidiandynamics/kafdrop
-    restart: on-failure
-    hostname: kafdrop
-    container_name: kafdrop
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
     ports:
-      - "9000:9000"
-    environment:
-      KAFKA_BROKERCONNECT: "broker:29092"
-      SCHEMAREGISTRY_CONNECT: "http://schema-registry:8081"
-      JVM_OPTS: "-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
-    depends_on:
-      - zookeeper
-      - broker
-      - schema-registry
+      - "27017:27017"
+
+  ultimate-ai-streaming:
+    image: python:3.8-alpine
+    container_name: ultimate-ai-streaming
+    ports:
+      - "5555:5555"
