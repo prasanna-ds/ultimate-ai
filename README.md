@@ -1,6 +1,6 @@
-# kafka-utilis
+# Ultimate-ai challenge
 
-Collections of python helpers to interact with the kafka infrastructure @sennder
+
 
 
 ## Usage
