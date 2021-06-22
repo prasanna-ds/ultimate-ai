@@ -164,16 +164,25 @@ python-versions = "*"
 
 [[package]]
 name = "isort"
-version = "5.8.0"
+version = "5.9.1"
 description = "A Python utility / library to sort Python imports."
 category = "dev"
 optional = false
-python-versions = ">=3.6,<4.0"
+python-versions = ">=3.6.1,<4.0"
 
 [package.extras]
 pipfile_deprecated_finder = ["pipreqs", "requirementslib"]
 requirements_deprecated_finder = ["pipreqs", "pip-api"]
 colors = ["colorama (>=0.4.3,<0.5.0)"]
+plugins = ["setuptools"]
+
+[[package]]
+name = "mockcache"
+version = "1.0.3"
+description = "The Python dictionary-based mock memcached client library."
+category = "dev"
+optional = false
+python-versions = "*"
 
 [[package]]
 name = "mypy"
@@ -268,6 +277,17 @@ description = "Enables Python programs to dynamically access arbitrary Java obje
 category = "main"
 optional = false
 python-versions = "*"
+
+[[package]]
+name = "pymemcache"
+version = "3.4.4"
+description = "A comprehensive, fast, pure Python memcached client"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+six = "*"
 
 [[package]]
 name = "pyparsing"
@@ -393,7 +413,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)", "win-inet-pton"]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
@@ -463,7 +483,7 @@ testing = ["coverage (>=4)", "coverage-enable-subprocess (>=1)", "flaky (>=3)", 
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "166bf617049c790ffc97ba3f505b2336e20281b52f74aeceed2aaff9cecfbcac"
+content-hash = "70f325330f81e373e9eb1cdbbc2bd3751ecd5ecb288e5b8e3efb00512a0d7c39"
 
 [metadata.files]
 appdirs = [
@@ -581,8 +601,11 @@ iniconfig = [
     {file = "iniconfig-1.1.1.tar.gz", hash = "sha256:bc3af051d7d14b2ee5ef9969666def0cd1a000e121eaea580d4a313df4b37f32"},
 ]
 isort = [
-    {file = "isort-5.8.0-py3-none-any.whl", hash = "sha256:2bb1680aad211e3c9944dbce1d4ba09a989f04e238296c87fe2139faa26d655d"},
-    {file = "isort-5.8.0.tar.gz", hash = "sha256:0a943902919f65c5684ac4e0154b1ad4fac6dcaa5d9f3426b732f1c8b5419be6"},
+    {file = "isort-5.9.1-py3-none-any.whl", hash = "sha256:8e2c107091cfec7286bc0f68a547d0ba4c094d460b732075b6fba674f1035c0c"},
+    {file = "isort-5.9.1.tar.gz", hash = "sha256:83510593e07e433b77bd5bff0f6f607dbafa06d1a89022616f02d8b699cfcd56"},
+]
+mockcache = [
+    {file = "mockcache-1.0.3.tar.gz", hash = "sha256:c637c35eaf0322f6c5fa6875a3fc5dc756514585a8b77abe4482d69bf364196d"},
 ]
 mypy = [
     {file = "mypy-0.812-cp35-cp35m-macosx_10_9_x86_64.whl", hash = "sha256:a26f8ec704e5a7423c8824d425086705e381b4f1dfdef6e3a1edab7ba174ec49"},
@@ -639,6 +662,10 @@ py = [
 py4j = [
     {file = "py4j-0.10.9-py2.py3-none-any.whl", hash = "sha256:859ba728a7bb43e9c2bf058832759fb97a598bb28cc12f34f5fc4abdec08ede6"},
     {file = "py4j-0.10.9.tar.gz", hash = "sha256:36ec57f43ff8ced260a18aa9a4e46c3500a730cac8860e259cbaa546c2b9db2f"},
+]
+pymemcache = [
+    {file = "pymemcache-3.4.4-py2.py3-none-any.whl", hash = "sha256:f0ad9d37e11ae227c000ec54a6dd90e7d24ad34d6c628482b16335001840fccd"},
+    {file = "pymemcache-3.4.4.tar.gz", hash = "sha256:8185a099a4823789560cb051d98daa51e2e4d4aa9fc6027c86766892408d984e"},
 ]
 pyparsing = [
     {file = "pyparsing-2.4.7-py2.py3-none-any.whl", hash = "sha256:ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"},

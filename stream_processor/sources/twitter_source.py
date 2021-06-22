@@ -1,7 +1,7 @@
 import logging
 
 from pyspark.sql import DataFrame
-from pyspark.sql.functions import current_timestamp, array, lit, collect_list
+from pyspark.sql.functions import collect_list, current_timestamp, lit
 from pyspark.sql.streaming import StreamingQuery
 from stream_processor.common.config import MONGODB_COLLECTION, MONGODB_DATABASE
 from stream_processor.common.udfs import get_total_case_count_udf, process_tweet_udf
@@ -15,12 +15,12 @@ logger = logging.getLogger(__name__)
 def write(stream: DataFrame, batch_id: int) -> None:
     logger.info("Writing a batch to Mongodb...")
     updated_stream = (
-        stream
-        .withColumn("key", lit(1))
+        stream.withColumn("key", lit(1))
         .groupby("key")
         .agg(collect_list("content").alias("content"))
         .withColumn("timestamp", current_timestamp())
         .withColumn("total_case_count", get_total_case_count_udf())
+        .drop("key")
     )
     (
         updated_stream.write.format("mongo")

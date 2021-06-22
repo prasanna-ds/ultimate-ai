@@ -21,3 +21,9 @@ services:
     container_name: ultimate-ai-streaming
     ports:
       - "5555:5555"
+
+  memcached:
+    image: memcached:latest-alpine
+    container_name: memcached
+    ports:
+    - "11211:11211"

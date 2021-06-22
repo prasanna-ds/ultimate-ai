@@ -13,7 +13,7 @@ def spark_session():
 
 @pytest.fixture(scope="session")
 def twitter_raw_dataframe(spark_session):
-    df = spark_session.createDataFrame(
+    twitter_raw_dataframe = spark_session.createDataFrame(
         [
             Row(
                 value="#Gregor then turned to look out the window at the dull weather.\n"
@@ -22,4 +22,25 @@ def twitter_raw_dataframe(spark_session):
             Row(value='"What\'s happened to me?" he thought. http://www.ultimate.ai\n'),
         ]
     )
-    return df
+    return twitter_raw_dataframe
+
+
+class MockMemcacheClient(object):
+    class KeyNoneError(Exception):
+        pass
+
+    def __init__(self):
+        self.cache = {}
+
+    def set(self, key, value):
+        self.cache[key] = value
+
+    def key_exists(self, key):
+        if self.cache[key]:
+            return True
+        return False
+
+    def get(self, key):
+        if not self.key_exists(key):
+            raise MockMemcacheClient.KeyNoneError
+        return self.cache[key]
