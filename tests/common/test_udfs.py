@@ -1,25 +1,7 @@
-from unittest.mock import patch
-
-from requests import Timeout
 from stream_processor.common.udfs import get_total_case_count_udf, process_tweet_udf
 
 
 def test_total_case_count_udf(twitter_raw_dataframe):
-    df = twitter_raw_dataframe.withColumn(
-        "total_case_count", get_total_case_count_udf()
-    )
-    rows = df.collect()
-
-    assert len(rows) == 3
-
-    for row in rows:
-        assert row["total_case_count"] is not None
-        assert isinstance(row["total_case_count"], int)
-
-
-@patch("stream_processor.common.udfs.requests.get", side_effect=Timeout())
-def test_total_case_count_udf_on_exception(mock_request, twitter_raw_dataframe):
-
     df = twitter_raw_dataframe.withColumn(
         "total_case_count", get_total_case_count_udf()
     )

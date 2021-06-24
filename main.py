@@ -1,6 +1,7 @@
 import argparse
 
 from processors import get_stream_processor
+
 from stream_processor.common.config import SOURCES
 
 

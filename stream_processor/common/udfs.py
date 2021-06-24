@@ -8,16 +8,20 @@ from bs4 import BeautifulSoup
 from pyspark.sql.functions import udf
 from pyspark.sql.types import IntegerType, StringType
 from requests import Response
+
 from stream_processor.common import config
 from stream_processor.common.utils import Cache
 
 
+URL: str = config.WORLDOMETER_URL
+
+
 @udf(returnType=IntegerType())  # type: ignore
 def get_total_case_count_udf() -> int:
-    url: str = config.WORLDOMETER_URL
     cache = Cache()
+    cache.set("total_case_count", -1)
     try:
-        req_data: Response = requests.get(url, timeout=(5, 10))
+        req_data: Response = requests.get(URL, timeout=(5, 10))
         soup: BeautifulSoup = BeautifulSoup(req_data.text, "html.parser")
         case_count: str = soup.find("title").text
         match_groups: Optional[Match[str]] = re.search(r"[0-9,]+", case_count)
@@ -26,7 +30,7 @@ def get_total_case_count_udf() -> int:
             cache.set("total_case_count", total_case_count)
         else:
             total_case_count = cache.get("total_case_count")
-    except requests.exceptions.Timeout:
+    except (Exception, AttributeError):
         print("exception raised")
         return cache.get("total_case_count")
 

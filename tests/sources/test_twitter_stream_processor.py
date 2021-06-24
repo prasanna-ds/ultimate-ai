@@ -24,7 +24,7 @@ def test_group_contents_in_a_batch(spark_session, twitter_raw_dataframe):
     with patch.object(test_twitter_stream, "spark", spark_session):
         with patch.object(test_twitter_stream, "stream", twitter_raw_dataframe):
             processed_df = test_twitter_stream.process()
-            df = test_twitter_stream.group_contents_in_a_batch(processed_df)
+            df = test_twitter_stream.process_micro_batch(processed_df)
 
     rows = df.collect()
 

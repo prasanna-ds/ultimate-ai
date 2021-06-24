@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Type, TypeVar
+from typing import TypeVar
 
 
 T = TypeVar("T", bound="Singleton")
@@ -27,7 +27,7 @@ class Cache(metaclass=Singleton):
         self._cache[key] = value
 
     def _key_exists(self, key: str) -> bool:
-        if self._cache[key]:
+        if key in self._cache:
             return True
         return False
 

@@ -9,7 +9,13 @@ from abc import ABC, abstractmethod
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.streaming import StreamingQuery
 from pyspark.sql.types import StructType
-from stream_processor.common.config import MONGODB_CONNECTION_STR
+
+from stream_processor.common.config import (
+    BATCH_DURATION,
+    MONGODB_COLLECTION,
+    MONGODB_CONNECTION_STR,
+    MONGODB_DATABASE,
+)
 
 
 logging.basicConfig(level=logging.INFO)
@@ -36,8 +42,37 @@ class StreamProcessor(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def process_micro_batch(self, stream: DataFrame) -> DataFrame:
+        return stream
+
+    def write(self, stream: DataFrame, batch_id: int) -> None:
+        logger.info("Writing a batch to Mongodb...")
+        (
+            self.process_micro_batch(stream)
+            .write.format("mongo")
+            .mode("append")
+            .option("database", MONGODB_DATABASE)
+            .option("collection", MONGODB_COLLECTION)
+            .save()
+        )
+        pass
+
     def write_stream(self) -> None:
-        raise NotImplementedError
+        """Write the streaming data every n seconds as micro batches."""
+        try:
+            self.streaming_query = (
+                self.stream.writeStream.trigger(processingTime=BATCH_DURATION)
+                .foreachBatch(self.write)
+                .start()
+            )
+            self.streaming_query.awaitTermination()
+        except Exception as e:
+            logger.error(e)
+            logger.error(
+                "Exception occurred while writing the data to Mongodb.Stopping the application.."
+            )
+            self._shutdown()
+            raise
 
     def _shutdown(self) -> None:
         """Shutdown handler to safely shutdown the running streaming query by
