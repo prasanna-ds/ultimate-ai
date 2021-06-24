@@ -23,24 +23,3 @@ def twitter_raw_dataframe(spark_session):
         ]
     )
     return twitter_raw_dataframe
-
-
-class MockMemcacheClient(object):
-    class KeyNoneError(Exception):
-        pass
-
-    def __init__(self):
-        self.cache = {}
-
-    def set(self, key, value):
-        self.cache[key] = value
-
-    def key_exists(self, key):
-        if self.cache[key]:
-            return True
-        return False
-
-    def get(self, key):
-        if not self.key_exists(key):
-            raise MockMemcacheClient.KeyNoneError
-        return self.cache[key]

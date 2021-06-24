@@ -1,29 +1,15 @@
 ---
 version: '3.8'
 services:
-  twitter-socket:
-    image: python:3.8-alpine
-    container_name: twitter-socket
-    ports:
-      - "5555:5555"
-    volumes:
-      - ./docker_setup.py:/usr
-    command: sh -c "python /usr/twitter_simulator.py"
-
   mongodb:
     image: mongo:latest
+    hostname: mongo
     container_name: mongodb
     ports:
       - "27017:27017"
 
   ultimate-ai-streaming:
-    image: python:3.8-alpine
-    container_name: ultimate-ai-streaming
-    ports:
-      - "5555:5555"
-
-  memcached:
-    image: memcached:latest-alpine
-    container_name: memcached
-    ports:
-    - "11211:11211"
+    container_name: ultimate-ai-spark-streaming
+    depends_on:
+      - mongodb
+    build: .

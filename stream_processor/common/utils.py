@@ -1,17 +1,37 @@
-from pymemcache.client.base import Client
+from __future__ import annotations
 
-from stream_processor.common.config import MEMCACHED_CONN_STR
-
-
-def get_memcached_client() -> Client:
-    return Client(MEMCACHED_CONN_STR)
+from typing import Any, Type, TypeVar
 
 
-def update_cache(key: str, value: int) -> None:
-    client = get_memcached_client()
-    client.set(key, value)
+T = TypeVar("T", bound="Singleton")
 
 
-def get_corona_case_count_from_cache(key: str) -> int:
-    client = get_memcached_client()
-    return client.get(key).decode("utf-8")
+class Singleton(type):
+    _instances: dict = {}
+
+    def __call__(cls: T, *args, **kwargs) -> T:  # type: ignore
+        if cls not in cls._instances:
+            instance = super().__call__(*args, **kwargs)
+            cls._instances[cls] = instance
+        return cls._instances[cls]  # type: ignore
+
+
+class Cache(metaclass=Singleton):
+    class KeyNotFoundError(Exception):
+        pass
+
+    def __init__(self) -> None:
+        self._cache: dict = {}
+
+    def set(self, key: str, value: int) -> None:
+        self._cache[key] = value
+
+    def _key_exists(self, key: str) -> bool:
+        if self._cache[key]:
+            return True
+        return False
+
+    def get(self, key: str) -> int:
+        if not self._key_exists(key):
+            raise Cache.KeyNotFoundError(f"Key {key} not found in Cache")
+        return int(self._cache[key])

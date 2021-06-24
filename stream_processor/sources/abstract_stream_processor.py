@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-class Source(ABC):
+class StreamProcessor(ABC):
     def __init__(self, application_name: str):
         self.spark = (
             SparkSession.builder.appName(application_name)
@@ -27,8 +27,9 @@ class Source(ABC):
         self.stream: DataFrame = self.spark.createDataFrame([], StructType([]))
         self.streaming_query: StreamingQuery = None  # type: ignore
 
-        signal.signal(signal.SIGTERM, lambda x, y: self.shutdown())
-        signal.signal(signal.SIGINT, lambda x, y: self.shutdown())
+        # Catch Signals for graceful shutdown.
+        signal.signal(signal.SIGTERM, lambda x, y: self._shutdown())
+        signal.signal(signal.SIGINT, lambda x, y: self._shutdown())
 
     @abstractmethod
     def process(self) -> DataFrame:
@@ -38,7 +39,10 @@ class Source(ABC):
     def write_stream(self) -> None:
         raise NotImplementedError
 
-    def shutdown(self) -> None:
+    def _shutdown(self) -> None:
+        """Shutdown handler to safely shutdown the running streaming query by
+        checking query status and in-flight messages.
+        """
         logging.info("Received shutdown signal, stopping stream processing...")
         while self.streaming_query.isActive:
             message: str = self.streaming_query.status["message"]
