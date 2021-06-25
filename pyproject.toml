@@ -11,6 +11,7 @@ pip             = "^21.0.1"
 pyspark         = "3.0.2"
 beautifulsoup4  = "4.9.3"
 requests        = "2.25.1"
+pyspark-stubs   = "^3.0.0"
 
 [tool.poetry.dev-dependencies]
 black           = "^20.8b1"
@@ -18,9 +19,7 @@ isort           = "^5.7.0"
 mypy            = "^0.812"
 pre-commit      = "^2.10.1"
 pytest          = "^6.2.2"
-pytest-mock     = "^3.5.1"
-pytest-cov      = "^2.11.1"
-requests-mock = "^1.9.3"
+requests-mock   = "^1.9.3"
 
 [tool.isort]
 profile                 = "black"

@@ -20,8 +20,8 @@ def test_process_tweet_udf(twitter_raw_dataframe):
 
     assert len(rows) == 3
     assert (
-        rows[0]["content"]
-        == "Gregor then turned to look out the window at the dull weather."
+            rows[0]["content"]
+            == "Gregor then turned to look out the window at the dull weather."
     )
     assert rows[1]["content"] == "It wasn't a dream."
     assert rows[2]["content"] == '"What\'s happened to me?" he thought.'

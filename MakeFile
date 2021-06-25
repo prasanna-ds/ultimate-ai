@@ -4,4 +4,12 @@ lint:
 
 .PHONY: test
 test:
-	poetry run pytest --cov-config=.coveragerc --cov=stream_processor/ --cache-clear --color=yes tests/ --disable-pytest-warnings
+	poetry run pytest tests/ --disable-pytest-warnings
+
+.PHONY: start
+start:
+	docker-compose up --build -d
+
+.PHONY: stop
+stop:
+	docker-compose down --remove-orphans

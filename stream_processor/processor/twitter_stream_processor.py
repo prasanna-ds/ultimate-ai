@@ -4,7 +4,7 @@ from pyspark.sql import DataFrame
 from pyspark.sql.functions import collect_list, current_timestamp, lit
 
 from stream_processor.common.udfs import get_total_case_count_udf, process_tweet_udf
-from stream_processor.sources.abstract_stream_processor import StreamProcessor
+from stream_processor.processor.abstract_stream_processor import StreamProcessor
 
 
 logging.basicConfig(level=logging.INFO)
@@ -12,10 +12,10 @@ logger = logging.getLogger(__name__)
 
 
 class TwitterStreamProcessor(StreamProcessor):
-    def __init__(self, application_name: str):
+    def __init__(self, application_name: str, source: str):
         super().__init__(application_name=application_name)
         self.stream: DataFrame = (
-            self.spark.readStream.format("socket")
+            self.spark.readStream.format(source)
             .option("host", "localhost")
             .option("port", 5555)
             .load()

@@ -41,7 +41,6 @@ class StreamProcessor(ABC):
     def process(self) -> DataFrame:
         raise NotImplementedError
 
-    @abstractmethod
     def process_micro_batch(self, stream: DataFrame) -> DataFrame:
         return stream
 

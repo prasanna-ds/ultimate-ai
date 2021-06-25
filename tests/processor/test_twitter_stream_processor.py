@@ -1,10 +1,12 @@
 from unittest.mock import patch
 
-from stream_processor.sources.twitter_stream_processor import TwitterStreamProcessor
+from stream_processor.processor.twitter_stream_processor import TwitterStreamProcessor
 
 
 def test_process(spark_session, twitter_raw_dataframe):
-    test_twitter_stream = TwitterStreamProcessor(application_name="test-ultimate-ai")
+    test_twitter_stream = TwitterStreamProcessor(
+        application_name="test-ultimate-ai", source="socket"
+    )
 
     with patch.object(test_twitter_stream, "spark", spark_session):
         with patch.object(test_twitter_stream, "stream", twitter_raw_dataframe):
@@ -19,7 +21,9 @@ def test_process(spark_session, twitter_raw_dataframe):
 
 
 def test_group_contents_in_a_batch(spark_session, twitter_raw_dataframe):
-    test_twitter_stream = TwitterStreamProcessor(application_name="test-ultimate-ai")
+    test_twitter_stream = TwitterStreamProcessor(
+        application_name="test-ultimate-ai", source="socket"
+    )
 
     with patch.object(test_twitter_stream, "spark", spark_session):
         with patch.object(test_twitter_stream, "stream", twitter_raw_dataframe):
