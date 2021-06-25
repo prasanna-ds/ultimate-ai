@@ -5,7 +5,7 @@ The processed micro batch of tweets with coronavirus case information will be us
 
 ## Assumptions
 
-Sources may vary, but the sink(Mongodb) can be same for storing the processed real-time events.
+Sources may vary, but the sink(Mongodb) is same for storing the processed real-time events.
 
 ## Implementation
 
@@ -34,6 +34,16 @@ or timed-out. The initial value is set to -1 and on each successful request, the
 2. "https://www.worldometers.info/coronavirus/" is external and we don't have control on changes. So we if we could not parse the
     html, we set the corona_case_count as -1 which indicates(to be monitored) that we have to adjust our application without stopping
    the processing of events and downtime.
+   
+## Running in Production
+
+In Spark, there can be only spark session per JVM, so the application is designed to run as a different job for different sources,
+
+```shell
+spark-submit --master yarn --deploy-mode cluster  --packages org.mongodb.spark:mongo-spark-connector_2.12:3.0.1 main.py --jobname ultimate_ai_socket_stream_processing --source socket
+spark-submit --master yarn --deploy-mode cluster  --packages org.mongodb.spark:mongo-spark-connector_2.12:3.0.1 main.py --jobname ultimate_ai_kafka_stream_processing --source kafka
+```
+This also helps in better failure management, operations and monitoring than the tightly coupled applications.
 
 ## Steps to run
 
