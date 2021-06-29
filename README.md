@@ -9,7 +9,7 @@ Sources may vary, but the sink(Mongodb) is same for storing the processed real-t
 
 ## Events in Mongodb
 
-![EVENTS](https://github.com/Prasannads/ultimate-ai/images/mongodb_events.png)
+![EVENTS](https://github.com/prasanna-ds/ultimate-ai/images/mongodb_events.png)
 
 ## Implementation
 
