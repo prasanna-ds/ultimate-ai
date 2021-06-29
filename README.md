@@ -7,6 +7,10 @@ The processed micro batch of tweets with coronavirus case information will be us
 
 Sources may vary, but the sink(Mongodb) is same for storing the processed real-time events.
 
+## Events in Mongodb
+
+![EVENTS](https://github.com/Prasannads/ultimate-ai/blob/images/mongodb_events.png)
+
 ## Implementation
 
 ### Design
@@ -26,7 +30,7 @@ Subclasses can alter the objects returned by the following factory methods,
 
 ### Cache Implementation
 
-This application holds a simple cache(key-value store)to lookup the corona case count if the "https://www.worldometers.info/coronavirus/" is not reachable
+This application holds a simple cache(as a key-value store)to lookup the corona case count if the "https://www.worldometers.info/coronavirus/" is not reachable
 or timed-out. The initial value is set to -1 and on each successful request, the cache will be updated.
 
 1. Whenever there is a request exception(assuming short hiccups), the corona case count will be retrieved from the cache.
@@ -34,6 +38,9 @@ or timed-out. The initial value is set to -1 and on each successful request, the
 2. "https://www.worldometers.info/coronavirus/" is external and we don't have control on changes. So we if we could not parse the
     html, we set the corona_case_count as -1 which indicates(to be monitored) that we have to adjust our application without stopping
    the processing of events and downtime.
+   
+Another distributed and robust solution could be to use a external key-value store, for ex: Memcached, without increasing
+the complexity of the architecture
    
 ## Running in Production
 
